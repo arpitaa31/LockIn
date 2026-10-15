@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LOCK//IN — Proof-of-Work Study OS</title>
+    <link rel="stylesheet" href="./styles/main.css" />
+    <link rel="stylesheet" href="./styles/components.css" />
+</head>
+<body>
+    <header class="topbar">
+        <div class="brand">
+            <span class="brand-lock">🔒</span>
+            <h1>LOCK<span>//</span>IN</h1>
+            <span class="badge-mode" id="system-status-badge">GATEKEEPER ACTIVE</span>
+        </div>
+
+        <div class="active-session-banner" id="active-session-banner">
+            <span class="session-label">ACTIVE BLOCK:</span>
+            <strong id="active-block-title">None Selected</strong>
+            <span class="session-timer" id="session-timer">00:00</span>
+            <button id="btn-verify-block" class="btn-verify" disabled>
+                Verify &amp; Unlock
+            </button>
+        </div>
+
+    <div class="telemetry">
+        <div class="stat-pill">
+            <span class="stat-label">STREAK</span>
+            <strong id="streak-count">0 🔥</strong>
+        </div>
+      <div class="stat-pill">
+        <span class="stat-label">UNLOCKED TODAY</span>
+        <strong id="unlocked-count">0 / 0</strong>
+      </div>
+      <button id="btn-gcal-sync" class="btn-secondary">📅 Sync GCal</button>
+    </div>
+    </header>
+
+<main class="workspace-grid">
+    <section class="pane pane-calendar" aria-label="Calendar Schedule">
+      <div class="pane-header">
+        <h2>01 // SCHEDULE BLOCKS</h2>
+        <div class="pane-actions">
+          <button id="btn-add-event" class="btn-icon" title="Add Study Block">+</button>
+        </div>
+      </div>
+
+      <div class="calendar-controls">
+        <span id="current-date-display">Today</span>
+        <select id="calendar-filter-tag">
+          <option value="ALL">All Subjects</option>
+          <option value="#math">#math</option>
+          <option value="#cs">#cs</option>
+          <option value="#history">#history</option>
+        </select>
+      </div>
+        <div class="timeline-container" id="calendar-timeline"></div>
+    </section>
+
+    <section class="pane pane-center" aria-label="Tasks and Flashcards">
+      <div class="center-tabs">
+        <button class="tab-btn active" data-tab="todos" id="tab-btn-todos">
+          02 // LOCKED TO-DOS
+        </button>
+        <button class="tab-btn" data-tab="flashcards" id="tab-btn-flashcards">
+          03 // FLASHCARD DECK &amp; GAUNTLET
+          <span class="due-badge" id="due-cards-badge">0</span>
+        </button>
+      </div>
+
+      <!-- TAB VIEW A: LOCKED TO-DO LIST -->
+      <div class="tab-content active" id="view-todos">
+        <form id="todo-form" class="todo-input-group">
+          <input 
+            type="text" 
+            id="todo-title-input" 
+            placeholder="Add a locked study task (e.g., Master Binary Trees)..." 
+            required 
+          />
+          <select id="todo-tag-input">
+            <option value="#cs">#cs</option>
+            <option value="#math">#math</option>
+            <option value="#history">#history</option>
+          </select>
+          <select id="todo-difficulty-input" title="Required Proof Level">
+            <option value="1">🔒 Lv.1 (1 Card Proof)</option>
+            <option value="3" selected>🔒 Lv.2 (3 Card Gauntlet)</option>
+            <option value="5">🔒 Lv.3 (3 Cards + AI Viva)</option>
+          </select>
+          <button type="submit" class="btn-primary">Lock Task</button>
+        </form>
+
+        <div class="todo-hint">
+          ⚠️ Tasks cannot be checked off directly. Click a padlock to enter Proof-of-Work.
+        </div>
+
+        <ul class="todo-list" id="todo-list">
+          <!-- Populated dynamically by todoView.js -->
+        </ul>
+      </div>
+
+      <!-- TAB VIEW B: FLASHCARD STUDIO & GAUNTLET -->
+      <div class="tab-content" id="view-flashcards">
+        <div class="flashcard-toolbar">
+          <div class="gauntlet-status" id="gauntlet-status-bar">
+            Mode: <strong>Free Practice</strong>
+          </div>
+          <button id="btn-new-card" class="btn-secondary">+ New Flashcard</button>
+        </div>
+
+        
+        <div class="card-stage">
+          <div class="flashcard-3d" id="flashcard-3d">
+            <div class="card-face card-front">
+              <span class="card-tag" id="card-front-tag">#tag</span>
+              <p class="card-text" id="card-front-text">
+                No cards loaded. Create a card or ask the Gatekeeper AI to generate a deck!
+              </p>
+              <span class="card-flip-hint">[Press SPACE to Flip]</span>
+            </div>
+            <div class="card-face card-back">
+              <span class="card-tag">ANSWER</span>
+              <p class="card-text" id="card-back-text">Answer appears here.</p>
+            </div>
+          </div>
+        </div>
+
+    
+        <div class="rating-controls" id="rating-controls">
+          <button class="btn-rate rate-fail" data-grade="1">1 // Fail (Reset)</button>
+          <button class="btn-rate rate-hard" data-grade="3">2 // Hard</button>
+          <button class="btn-rate rate-good" data-grade="4">3 // Good</button>
+          <button class="btn-rate rate-easy" data-grade="5">4 // Easy (Unlock Pt)</button>
+        </div>
+        
+        <form id="flashcard-create-form" class="card-creator hidden">
+          <h3>Create Flashcard</h3>
+          <input type="text" id="card-q-input" placeholder="Question / Front prompt..." required />
+          <textarea id="card-a-input" placeholder="Answer / Back explanation..." required></textarea>
+          <div class="card-creator-row">
+            <select id="card-tag-select">
+              <option value="#cs">#cs</option>
+              <option value="#math">#math</option>
+              <option value="#history">#history</option>
+            </select>
+            <button type="submit" class="btn-primary">Save Card</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <aside class="pane pane-chat" aria-label="Gatekeeper AI Assistant">
+      <div class="pane-header">
+        <h2>04 // THE GATEKEEPER AI</h2>
+        <select id="chat-mode-select" class="chat-mode-select">
+          <option value="INTERROGATOR">⚔️ Interrogator (Unlocks Tasks)</option>
+          <option value="TUTOR">🧠 Socratic Tutor</option>
+        </select>
+      </div>
+
+      <div class="chat-context-bar" id="chat-context-bar">
+        Target Task: <strong id="chat-target-task">None (General Study)</strong>
+      </div>
+
+      <div class="chat-messages" id="chat-messages">
+        <div class="msg msg-ai">
+          <div class="msg-header">GATEKEEPER // SYSTEM</div>
+          <p>
+            Welcome to <strong>LOCK//IN</strong>. Select a locked task or calendar block when you finish studying. I will test your recall before unlocking your progress.
+          </p>
+        </div>
+      </div>
+
+      <div class="chat-quick-commands">
+        <button class="cmd-chip" data-cmd="/quiz">⚔️ /quiz me</button>
+        <button class="cmd-chip" data-cmd="/gen-cards">🃏 /gen-cards</button>
+        <button class="cmd-chip" data-cmd="/schedule">📅 /schedule</button>
+      </div>
+
+      <form id="chat-form" class="chat-input-area">
+        <textarea 
+          id="chat-input" 
+          rows="2" 
+          placeholder="Answer the Gatekeeper, paste study notes, or type /help..."
+          required
+        ></textarea>
+        <button type="submit" class="btn-send">SEND</button>
+      </form>
+    </aside>
+</main>
+
+    <div class="modal-overlay hidden" id="proof-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="proof-modal-title">🔒 PROOF-OF-WORK REQUIRED</h3>
+                <button id="btn-close-modal" class="btn-icon">✕</button>
+            </div>
+            <p id="proof-modal-desc">
+                To unlock this task, paste at least 2 sentences of summary notes from your session. The Gatekeeper will generate flashcards and test you.
+            </p>
+            <textarea 
+                id="proof-notes-input" 
+                rows="5" 
+                placeholder="What did you actually learn in this session? Write formulas, key concepts, or definitions in your own words..."
+            ></textarea>
+            <div class="modal-actions">
+                <button id="btn-start-gauntlet" class="btn-primary">
+                    Submit Notes &amp; Enter Gauntlet ⚔️
+                </button>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="./src/app.js"></script>
+</body>
+</html>
